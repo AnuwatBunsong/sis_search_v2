@@ -1,10 +1,13 @@
 const { Client } = require("@elastic/elasticsearch");
-                   require("dotenv").config();
+require("dotenv").config();
 
 const elasticUrl = process.env.ELASTIC_URL || "http://localhost:9200";
-const esclient   = new Client({ node: elasticUrl });
-const index      = "subject";
-const type       = "quotes";
+const esclient = new Client({ node: elasticUrl });
+const index = "subject";
+const type = "quotes";
+
+const indexStudents = "student";
+const typeStudents = "quotesStd";
 
 /**
  * @function createIndex
@@ -14,15 +17,16 @@ const type       = "quotes";
 
 async function createIndex(index) {
   try {
-
     await esclient.indices.create({ index });
     console.log(`Created index ${index}`);
-
+    await esclient.indices.create({ indexStudents });
+    console.log(`Created index ${indexStudents}`);
   } catch (err) {
-
     console.error(`An error occurred while creating the index ${index}:`);
+    console.error(
+      `An error occurred while creating the index ${indexStudents}:`
+    );
     console.error(err);
-
   }
 }
 
@@ -32,28 +36,34 @@ async function createIndex(index) {
  * @description Sets the quotes mapping to the database.
  */
 
-async function setQuotesMapping () {
+async function setQuotesMapping() {
   try {
     const schema = {
       quote: {
-        type: "text" 
+        type: "text",
       },
       author: {
-        type: "text"
-      }
+        type: "text",
+      },
     };
-  
-    await esclient.indices.putMapping({ 
-      index, 
+
+    await esclient.indices.putMapping({
+      index,
       type,
       include_type_name: true,
-      body: { 
-        properties: schema 
-      } 
-    })
-    
+      body: {
+        properties: schema,
+      },
+
+      indexStudents,
+      typeStudents,
+      include_type_name: true,
+      body: {
+        properties: schema,
+      },
+    });
+
     console.log("Quotes mapping created successfully");
-  
   } catch (err) {
     console.error("An error occurred while setting the quotes mapping:");
     console.error(err);
@@ -68,25 +78,20 @@ async function setQuotesMapping () {
 
 function checkConnection() {
   return new Promise(async (resolve) => {
-
     console.log("Checking connection to ElasticSearch...");
     let isConnected = false;
 
     while (!isConnected) {
       try {
-
         await esclient.cluster.health({});
         console.log("Successfully connected to ElasticSearch");
         isConnected = true;
 
-      // eslint-disable-next-line no-empty
-      } catch (_) {
-
-      }
+        // eslint-disable-next-line no-empty
+      } catch (_) {}
     }
 
     resolve(true);
-
   });
 }
 
@@ -96,5 +101,7 @@ module.exports = {
   checkConnection,
   createIndex,
   index,
-  type
+  type,
+  indexStudents,
+  typeStudents,
 };

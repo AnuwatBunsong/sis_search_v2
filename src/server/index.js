@@ -1,10 +1,10 @@
-const express      = require("express");
-const cors         = require("cors");
-const bodyParser   = require("body-parser");
-const routes       = require("./routes");
-                     require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const routes = require("./routes");
+require("dotenv").config();
 
-const app  = express();
+const app = express();
 const port = process.env.NODE_PORT || 3000;
 
 /**
@@ -14,16 +14,19 @@ const port = process.env.NODE_PORT || 3000;
  */
 
 function start() {
-
-  return  app.use(cors())
-             .use(bodyParser.urlencoded({ extended: false }))
-             .use(bodyParser.json())
-             .use("/subjects",routes)
-             .use((_req, res) => res.status(404).json({ success: false,error: "Route not found" }))
-             .listen(port, () => console.log(`Server ready on port ${port}`));
-
+  return app
+    .use(cors())
+    .use(bodyParser.urlencoded({ extended: false }))
+    .use(bodyParser.json())
+    .use("/subjects", routes)
+    .use("/students", routes)
+    .use((_req, res) =>
+      res.status(404).json({ success: false, error: "Route not found" })
+    )
+    .listen(port, () => console.log(`Server ready on port ${port}`));
 }
 
 module.exports = {
-  start
+  start,
+  app,
 };

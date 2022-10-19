@@ -1,5 +1,6 @@
 const elastic = require("../elastic");
-const quotes  = require(`./subjects.json`);
+const quotes = require(`./subjects.json`);
+const quotesStd = require(`./students.json`);
 
 /**
  * @function createESAction
@@ -11,8 +12,8 @@ const quotes  = require(`./subjects.json`);
 const esAction = {
   index: {
     _index: elastic.index,
-    _type: elastic.type
-  }
+    _type: elastic.type,
+  },
 };
 
 /**
@@ -21,10 +22,13 @@ const esAction = {
  */
 
 async function populateDatabase() {
-
   const docs = [];
 
   for (const quote of quotes) {
+    docs.push(esAction);
+    docs.push(quote);
+  }
+  for (const quote of quotesStd) {
     docs.push(esAction);
     docs.push(quote);
   }
@@ -33,5 +37,5 @@ async function populateDatabase() {
 }
 
 module.exports = {
-  populateDatabase
+  populateDatabase,
 };
