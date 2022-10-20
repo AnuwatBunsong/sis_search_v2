@@ -14,6 +14,7 @@ services:
       - ELASTIC_URL=http://elasticsearch:9200
     volumes:
       - .:/usr/src/app/quotes
+      - .:/usr/src/app/quotesStd
     command: npm run start
     links:
       - elasticsearch

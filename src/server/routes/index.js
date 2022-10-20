@@ -1,6 +1,6 @@
-const express    = require("express");
-const controller = require("../controllers");
-const routes     = express.Router();
+const express = require("express");
+const controller = require("../controllers/index");
+const routes = express.Router();
 
 routes.route("/").get(controller.getQuotes);
 routes.route("/").get(controller.getQuotes_name);
